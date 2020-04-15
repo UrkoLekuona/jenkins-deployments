@@ -14,6 +14,7 @@ spec:
     spec:
       containers:
       - name: jenkins
+        # This image is jenkins/jenkins:latest with Docker CLI
         image: urkolekuona/jenkins-docker
         ports:
         - containerPort: 8080
