@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1 # for versions before 1.7.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: dind-jenkins-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dind-jenkins
+  template:
+    metadata:
+      labels:
+        app: dind-jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: urkolekuona/jenkins-docker
+        ports:
+        - containerPort: 8080
+        env:
+          - name: DOCKER_HOST
+            value: tcp://0.0.0.0:2375
+      - name: dind-daemon
+        image: docker:dind
+        command: ["dockerd", "-H", "tcp://0.0.0.0:2375"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: docker-graph-storage
+            mountPath: /var/lib/docker
+      volumes:
+        - name: docker-graph-storage
+          emptyDir: {}

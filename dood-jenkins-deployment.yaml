@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1 # for versions before 1.7.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: dood-jenkins-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dood-jenkins
+  template:
+    metadata:
+      labels:
+        app: dood-jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: urkolekuona/jenkins-docker
+        ports:
+        - containerPort: 8080
+        securityContext:
+          runAsGroup: 0
+          privileged: true
+        volumeMounts:
+          - name: docker-sock
+            mountPath: /var/run/docker.sock
+      volumes:
+        - name: docker-sock
+          hostPath: 
+            path: /var/run/docker.sock
+            type: Socket
